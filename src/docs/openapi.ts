@@ -235,7 +235,62 @@ export const openApiDocument = {
         },
       },
     },
+    "/api/farms": {
+      get: {
+        summary: "Get all farms",
+        description: "Retrieve all registered farms",
+        tags: ["Farms"],
+        responses: {
+          "200": {
+            description: "Farms retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve farms",
+          },
+        },
+      },
 
+      post: {
+        summary: "Create a farm",
+        description: "Register a new farm",
+        tags: ["Farms"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "farm_code", "location"],
+                properties: {
+                  name: { type: "string", example: "Green Valley Farm" },
+                  farm_code: { type: "string", example: "FARM-001" },
+                  description: {
+                    type: "string",
+                    example: "Mixed livestock farm",
+                  },
+                  location: { type: "string", example: "Chigumula" },
+                  district: { type: "string", example: "Blantyre" },
+                  region: { type: "string", example: "Southern Region" },
+                  size: { type: "number", example: 25 },
+                  size_unit: { type: "string", example: "hectares" },
+                  contact_person: { type: "string", example: "John Banda" },
+                  phone: { type: "string", example: "+265991234567" },
+                  email: { type: "string", example: "farm@example.com" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Farm created successfully",
+          },
+          "500": {
+            description: "Failed to create farm",
+          },
+        },
+      },
+    },
     //place above
   },
   components: {
