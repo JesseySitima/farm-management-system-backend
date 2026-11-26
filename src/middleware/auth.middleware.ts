@@ -1,4 +1,3 @@
-
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { authConfig } from "../config/auth.js";
@@ -7,12 +6,13 @@ export interface AuthenticatedRequestUser {
   id: string;
   role_id: string;
   role_name: string;
+  must_change_password: boolean;
 }
 
 export const authenticateToken = (
   _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = _req.headers.authorization;
@@ -38,12 +38,12 @@ export const authenticateToken = (
 
     // Verify JWT
     const decoded = jwt.verify(token, authConfig.jwtSecret);
-
     if (
       typeof decoded === "string" ||
       !decoded.sub ||
       typeof decoded.role_id !== "string" ||
-      typeof decoded.role_name !== "string"
+      typeof decoded.role_name !== "string" ||
+      typeof decoded.must_change_password !== "boolean"
     ) {
       res.status(401).json({
         success: false,
@@ -54,10 +54,11 @@ export const authenticateToken = (
 
     // Store authenticated user information for subsequent handlers
     res.locals.authenticatedUser = {
-      id: decoded.sub,
-      role_id: decoded.role_id,
-      role_name: decoded.role_name,
-    } satisfies AuthenticatedRequestUser;
+  id: decoded.sub,
+  role_id: decoded.role_id,
+  role_name: decoded.role_name,
+  must_change_password: decoded.must_change_password,
+} satisfies AuthenticatedRequestUser;
 
     next();
   } catch {

@@ -21,4 +21,5 @@ export interface AuthenticatedUser {
   phone: string | null;
   role_id: string;
   role_name: string;
+  must_change_password: boolean;
 }

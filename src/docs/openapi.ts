@@ -12,130 +12,231 @@ export const openApiDocument = {
     },
   ],
   paths: {
-  "/api/auth/register": {
-    post: {
-      tags: ["Authentication"],
-      summary: "Register a new user",
-      description: "Creates a new user account.",
-      requestBody: {
-        required: true,
-        content: {
-          "application/json": {
+    "/api/auth/register": {
+      post: {
+        tags: ["Authentication"],
+        summary: "Register a new user",
+        description: "Creates a new user account.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["first_name", "last_name", "email", "password"],
+                properties: {
+                  first_name: {
+                    type: "string",
+                    example: "John",
+                  },
+                  last_name: {
+                    type: "string",
+                    example: "Banda",
+                  },
+                  email: {
+                    type: "string",
+                    format: "email",
+                    example: "john@example.com",
+                  },
+                  phone: {
+                    type: "string",
+                    example: "+265991234567",
+                  },
+                  password: {
+                    type: "string",
+                    format: "password",
+                    example: "Password123",
+                  },
+                  role_id: {
+                    type: "string",
+                    format: "uuid",
+                    description: "Optional. Defaults to Farm Worker.",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "User registered successfully",
+          },
+          "400": {
+            description: "Invalid input or registration failed",
+          },
+        },
+      },
+    },
+
+    "/api/auth/login": {
+      post: {
+        tags: ["Authentication"],
+        summary: "Login user",
+        description: "Authenticates a user and returns a JWT access token.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["email", "password"],
+                properties: {
+                  email: {
+                    type: "string",
+                    format: "email",
+                    example: "john.banda@example.com",
+                  },
+                  password: {
+                    type: "string",
+                    format: "password",
+                    example: "Password123",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "Login successful. Returns JWT and user details.",
+          },
+          "401": {
+            description: "Invalid credentials or inactive account.",
+          },
+        },
+      },
+    },
+
+    "/api/auth/me": {
+      get: {
+        tags: ["Authentication"],
+        summary: "Get authenticated user",
+        description: "Returns the profile of the currently authenticated user.",
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        responses: {
+          200: {
+            description: "User retrieved successfully",
+          },
+          401: {
+            description: "Authentication token is missing, invalid, or expired",
+          },
+          404: {
+            description: "User not found or inactive",
+          },
+        },
+      },
+    },
+    "/api/roles": {
+      get: {
+        tags: ["Roles"],
+        summary: "Get all active roles",
+        description: "Retrieves all active user roles available in the system.",
+        responses: {
+          "200": {
+            description: "Roles retrieved successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    success: {
+                      type: "boolean",
+                      example: true,
+                    },
+                    message: {
+                      type: "string",
+                      example: "Roles retrieved successfully",
+                    },
+                    data: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          id: {
+                            type: "string",
+                            format: "uuid",
+                          },
+                          name: {
+                            type: "string",
+                            example: "Farm Manager",
+                          },
+                          description: {
+                            type: "string",
+                            nullable: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "500": {
+            description: "Failed to retrieve roles",
+          },
+        },
+      },
+    },
+
+    "/api/users": {
+      get: {
+        tags: ["Users"],
+        summary: "Get all users",
+        description:
+          "Retrieves users with pagination. Only System Administrators can access this endpoint.",
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
+        parameters: [
+          {
+            name: "page",
+            in: "query",
+            required: false,
             schema: {
-              type: "object",
-              required: [
-                "first_name",
-                "last_name",
-                "email",
-                "password",
-              ],
-              properties: {
-                first_name: {
-                  type: "string",
-                  example: "John",
-                },
-                last_name: {
-                  type: "string",
-                  example: "Banda",
-                },
-                email: {
-                  type: "string",
-                  format: "email",
-                  example: "john@example.com",
-                },
-                phone: {
-                  type: "string",
-                  example: "+265991234567",
-                },
-                password: {
-                  type: "string",
-                  format: "password",
-                  example: "Password123",
-                },
-                role_id: {
-                  type: "string",
-                  format: "uuid",
-                  description: "Optional. Defaults to Farm Worker.",
-                },
-              },
+              type: "integer",
+              default: 1,
+              minimum: 1,
             },
+            description: "Page number",
           },
-        },
-      },
-      responses: {
-        "201": {
-          description: "User registered successfully",
-        },
-        "400": {
-          description: "Invalid input or registration failed",
-        },
-      },
-    },
-  },
-
-"/api/auth/login": {
-  post: {
-    tags: ["Authentication"],
-    summary: "Login user",
-    description: "Authenticates a user and returns a JWT access token.",
-    requestBody: {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            required: ["email", "password"],
-            properties: {
-              email: {
-                type: "string",
-                format: "email",
-                example: "john.banda@example.com",
-              },
-              password: {
-                type: "string",
-                format: "password",
-                example: "Password123",
-              },
+          {
+            name: "limit",
+            in: "query",
+            required: false,
+            schema: {
+              type: "integer",
+              default: 10,
+              minimum: 1,
+              maximum: 100,
             },
+            description: "Number of users per page",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Users retrieved successfully",
+          },
+          "401": {
+            description: "Authentication required",
+          },
+          "403": {
+            description: "Insufficient permissions",
+          },
+          "500": {
+            description: "Failed to retrieve users",
           },
         },
       },
     },
-    responses: {
-      "200": {
-        description: "Login successful. Returns JWT and user details.",
-      },
-      "401": {
-        description: "Invalid credentials or inactive account.",
-      },
-    },
-  },
-},
 
-"/api/auth/me": {
-  get: {
-    tags: ["Authentication"],
-    summary: "Get authenticated user",
-    description: "Returns the profile of the currently authenticated user.",
-    security: [
-      {
-        bearerAuth: [],
-      },
-    ],
-    responses: {
-      200: {
-        description: "User retrieved successfully",
-      },
-      401: {
-        description: "Authentication token is missing, invalid, or expired",
-      },
-      404: {
-        description: "User not found or inactive",
-      },
-    },
-  },
-},
-//place above
+    //place above
   },
   components: {
     securitySchemes: {

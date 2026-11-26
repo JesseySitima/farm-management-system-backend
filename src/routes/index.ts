@@ -1,5 +1,7 @@
 import { Router } from "express";
 import authRouter from "./auth.routes.js";
+import rolesRouter from "./roles.routes.js";
+import usersRouter from "./users.routes.js";
 
 const router = Router();
 
@@ -11,7 +13,8 @@ router.get("/", (_req, res) => {
   });
 });
 
-// Authentication routes
 router.use("/auth", authRouter);
+router.use("/roles", rolesRouter);
+router.use("/users", usersRouter);
 
 export default router;

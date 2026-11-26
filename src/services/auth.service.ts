@@ -9,6 +9,7 @@ import type {
   AuthenticatedUser,
 } from "../types/auth.types.js";
 
+
 // REGISTER USER
 export const registerUser = async (input: RegisterUserInput) => {
   const { first_name, last_name, email, phone, password, role_id } = input;
@@ -89,7 +90,9 @@ export const loginUser = async (input: LoginUserInput) => {
   // Find user by email
   const { data: user, error: userError } = await supabaseAdmin
     .from("users")
-    .select("id, first_name, last_name, email, phone, password_hash, role_id, is_active")
+    .select(
+      "id, first_name, last_name, email, phone, password_hash, role_id, is_active, must_change_password"
+    )
     .ilike("email", email)
     .maybeSingle();
 
@@ -123,6 +126,18 @@ export const loginUser = async (input: LoginUserInput) => {
     throw new Error("User role could not be found");
   }
 
+  // Record successful login
+  const { error: updateError } = await supabaseAdmin
+    .from("users")
+    .update({
+      last_login_at: new Date().toISOString(),
+    })
+    .eq("id", user.id);
+
+  if (updateError) {
+    throw new Error("Failed to update last login time");
+  }
+
   const authenticatedUser: AuthenticatedUser = {
     id: user.id,
     first_name: user.first_name,
@@ -131,6 +146,7 @@ export const loginUser = async (input: LoginUserInput) => {
     phone: user.phone,
     role_id: user.role_id,
     role_name: role.name,
+    must_change_password: user.must_change_password,
   };
 
   // Generate JWT
@@ -139,6 +155,7 @@ export const loginUser = async (input: LoginUserInput) => {
       sub: user.id,
       role_id: user.role_id,
       role_name: role.name,
+      must_change_password: user.must_change_password,
     },
     authConfig.jwtSecret,
     {
@@ -149,5 +166,64 @@ export const loginUser = async (input: LoginUserInput) => {
   return {
     token,
     user: authenticatedUser,
+  };
+};
+
+// CHANGE PASSWORD
+export const changePassword = async (
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+) => {
+  // Retrieve current user's password
+  const { data: user, error: userError } = await supabaseAdmin
+    .from("users")
+    .select("id, password_hash")
+    .eq("id", userId)
+    .single();
+
+  if (userError || !user) {
+    throw new Error("User not found");
+  }
+
+  // Verify current password
+  const passwordMatches = await bcrypt.compare(
+    currentPassword,
+    user.password_hash
+  );
+
+  if (!passwordMatches) {
+    throw new Error("Current password is incorrect");
+  }
+
+  // Prevent reusing the current password
+  const samePassword = await bcrypt.compare(
+    newPassword,
+    user.password_hash
+  );
+
+  if (samePassword) {
+    throw new Error("New password must be different from current password");
+  }
+
+  // Hash new password
+  const newPasswordHash = await bcrypt.hash(newPassword, 12);
+
+  // Update password and remove forced-change requirement
+  const { error: updateError } = await supabaseAdmin
+    .from("users")
+    .update({
+      password_hash: newPasswordHash,
+      must_change_password: false,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", userId);
+
+  if (updateError) {
+    throw new Error("Failed to update password");
+  }
+
+  return {
+    message: "Password changed successfully",
   };
 };

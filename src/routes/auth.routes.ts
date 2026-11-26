@@ -1,7 +1,7 @@
 
 import { Router } from "express";
-import { registerSchema, loginSchema } from "../utils/auth.validation.js";
-import { registerUser, loginUser } from "../services/auth.service.js";
+import { registerSchema, loginSchema, changePasswordSchema } from "../utils/auth.validation.js";
+import { registerUser, loginUser, changePassword } from "../services/auth.service.js";
 import { authenticateToken } from "../middleware/auth.middleware.js";
 import { supabaseAdmin } from "../config/supabase.js";
 
@@ -100,6 +100,32 @@ router.get("/me", authenticateToken, async (_req, res) => {
       message: error instanceof Error
         ? error.message
         : "Failed to retrieve user",
+    });
+  }
+});
+
+// CHANGE PASSWORD
+router.post("/change-password", authenticateToken, async (req, res) => {
+  try {
+    const validatedData = changePasswordSchema.parse(req.body);
+    const authenticatedUser = res.locals.authenticatedUser;
+
+    const result = await changePassword(
+      authenticatedUser.id,
+      validatedData.current_password,
+      validatedData.new_password
+    );
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error instanceof Error
+        ? error.message
+        : "Password change failed",
     });
   }
 });
