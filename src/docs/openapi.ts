@@ -291,6 +291,228 @@ export const openApiDocument = {
         },
       },
     },
+
+    "/api/species": {
+      get: {
+        tags: ["Species"],
+        summary: "Get all species",
+        description: "Retrieve all registered livestock species",
+        responses: {
+          "200": {
+            description: "Species retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve species",
+          },
+        },
+      },
+
+      post: {
+        tags: ["Species"],
+        summary: "Create a species",
+        description: "Add a livestock species and define its management type",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "code", "management_type"],
+                properties: {
+                  name: {
+                    type: "string",
+                    example: "Chicken",
+                  },
+                  code: {
+                    type: "string",
+                    example: "CHK",
+                  },
+                  management_type: {
+                    type: "string",
+                    enum: ["individual", "flock"],
+                    example: "flock",
+                  },
+                  description: {
+                    type: "string",
+                    example: "Domestic poultry",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Species created successfully",
+          },
+          "500": {
+            description: "Failed to create species",
+          },
+        },
+      },
+    },
+
+    "/api/livestock": {
+      get: {
+        summary: "Get all livestock",
+        description: "Retrieve all registered livestock across farms",
+        tags: ["Livestock"],
+        responses: {
+          "200": {
+            description: "Livestock retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve livestock",
+          },
+        },
+      },
+
+      post: {
+        summary: "Register livestock",
+        description: "Register a new animal under a farm",
+        tags: ["Livestock"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["farm_id", "species_id", "animal_code"],
+                properties: {
+                  farm_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-FARM-UUID",
+                  },
+                  species_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-GOAT-SPECIES-UUID",
+                  },
+                  animal_code: {
+                    type: "string",
+                    example: "GOAT-001",
+                  },
+                  breed: {
+                    type: "string",
+                    example: "Boer",
+                  },
+                  sex: {
+                    type: "string",
+                    enum: ["male", "female", "unknown"],
+                    example: "female",
+                  },
+                  date_of_birth: {
+                    type: "string",
+                    format: "date",
+                    example: "2025-05-12",
+                  },
+                  acquisition_date: {
+                    type: "string",
+                    format: "date",
+                    example: "2025-06-01",
+                  },
+                  acquisition_type: {
+                    type: "string",
+                    example: "Purchased",
+                  },
+                  notes: {
+                    type: "string",
+                    example: "Healthy young goat",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Livestock registered successfully",
+          },
+          "500": {
+            description: "Failed to register livestock",
+          },
+        },
+      },
+    },
+    "/api/livestock-flocks": {
+      get: {
+        summary: "Get all livestock flocks",
+        tags: ["Livestock Flocks"],
+        responses: {
+          "200": {
+            description: "Livestock flocks retrieved successfully",
+          },
+        },
+      },
+
+      post: {
+        summary: "Register a livestock flock",
+        tags: ["Livestock Flocks"],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: [
+                  "farm_id",
+                  "species_id",
+                  "flock_code",
+                  "total_quantity",
+                ],
+                properties: {
+                  farm_id: {
+                    type: "string",
+                    format: "uuid",
+                  },
+                  species_id: {
+                    type: "string",
+                    format: "uuid",
+                  },
+                  flock_code: {
+                    type: "string",
+                    example: "FLOCK-001",
+                  },
+                  breed: {
+                    type: "string",
+                    example: "Sasso",
+                  },
+                  total_quantity: {
+                    type: "integer",
+                    example: 200,
+                  },
+                  male_quantity: {
+                    type: "integer",
+                    example: 80,
+                  },
+                  female_quantity: {
+                    type: "integer",
+                    example: 120,
+                  },
+                  purpose: {
+                    type: "string",
+                    example: "Layers",
+                  },
+                  date_established: {
+                    type: "string",
+                    format: "date",
+                  },
+                  notes: {
+                    type: "string",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Livestock flock registered successfully",
+          },
+        },
+      },
+    },
     //place above
   },
   components: {
