@@ -932,6 +932,55 @@ export const openApiDocument = {
         },
       },
     },
+    "/api/products": {
+  get: {
+    tags: ["Products"],
+    summary: "Get all products",
+    description: "Retrieve all active and inactive products in the shared product catalogue.",
+    security: [{ bearerAuth: [] }],
+    responses: {
+      "200": {
+        description: "Products retrieved successfully",
+      },
+      "500": {
+        description: "Server error",
+      },
+    },
+  },
+  post: {
+    tags: ["Products"],
+    summary: "Create a product",
+    description: "Add a new product to the shared product catalogue.",
+    security: [{ bearerAuth: [] }],
+    requestBody: {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: ["name", "unit_of_measure"],
+            properties: {
+              name: { type: "string", example: "Eggs" },
+              unit_of_measure: { type: "string", example: "pieces" },
+              description: {
+                type: "string",
+                example: "Fresh chicken eggs",
+              },
+            },
+          },
+        },
+      },
+    },
+    responses: {
+      "201": {
+        description: "Product created successfully",
+      },
+      "500": {
+        description: "Server error",
+      },
+    },
+  },
+},
     //place above
   },
   components: {

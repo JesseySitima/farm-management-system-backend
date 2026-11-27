@@ -11,6 +11,7 @@ import inventoryItemsRouter from "./inventory-items.routes.js";
 import suppliersRouter from "./suppliers.routes.js";
 import stockReceiptsRouter from "./stock-receipts.routes.js";
 import stockMovementsRouter from "./stock-movements.routes.js";
+import productsRouter from "./products.routes.js";
 
 const router = Router();
 
@@ -34,5 +35,6 @@ router.use("/inventory-items", inventoryItemsRouter);
 router.use("/suppliers", suppliersRouter);
 router.use("/stock-receipts", stockReceiptsRouter);
 router.use("/stock-movements", stockMovementsRouter);
+router.use("/products", productsRouter);
 
 export default router;
