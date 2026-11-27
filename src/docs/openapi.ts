@@ -36,7 +36,7 @@ export const openApiDocument = {
                   email: {
                     type: "string",
                     format: "email",
-                    example: "john@example.com",
+                    example: "farmowner@example.com",
                   },
                   phone: {
                     type: "string",
@@ -45,7 +45,7 @@ export const openApiDocument = {
                   password: {
                     type: "string",
                     format: "password",
-                    example: "Password123",
+                    example: "1234567890",
                   },
                   role_id: {
                     type: "string",
@@ -84,12 +84,12 @@ export const openApiDocument = {
                   email: {
                     type: "string",
                     format: "email",
-                    example: "john.banda@example.com",
+                    example: "farmowner@example.com",
                   },
                   password: {
                     type: "string",
                     format: "password",
-                    example: "Password123",
+                    example: "1234567890",
                   },
                 },
               },
@@ -933,54 +933,124 @@ export const openApiDocument = {
       },
     },
     "/api/products": {
-  get: {
-    tags: ["Products"],
-    summary: "Get all products",
-    description: "Retrieve all active and inactive products in the shared product catalogue.",
-    security: [{ bearerAuth: [] }],
-    responses: {
-      "200": {
-        description: "Products retrieved successfully",
+      get: {
+        tags: ["Products"],
+        summary: "Get all products",
+        description:
+          "Retrieve all active and inactive products in the shared product catalogue.",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          "200": {
+            description: "Products retrieved successfully",
+          },
+          "500": {
+            description: "Server error",
+          },
+        },
       },
-      "500": {
-        description: "Server error",
-      },
-    },
-  },
-  post: {
-    tags: ["Products"],
-    summary: "Create a product",
-    description: "Add a new product to the shared product catalogue.",
-    security: [{ bearerAuth: [] }],
-    requestBody: {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            required: ["name", "unit_of_measure"],
-            properties: {
-              name: { type: "string", example: "Eggs" },
-              unit_of_measure: { type: "string", example: "pieces" },
-              description: {
-                type: "string",
-                example: "Fresh chicken eggs",
+      post: {
+        tags: ["Products"],
+        summary: "Create a product",
+        description: "Add a new product to the shared product catalogue.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "unit_of_measure"],
+                properties: {
+                  name: { type: "string", example: "Eggs" },
+                  unit_of_measure: { type: "string", example: "pieces" },
+                  description: {
+                    type: "string",
+                    example: "Fresh chicken eggs",
+                  },
+                },
               },
             },
           },
         },
+        responses: {
+          "201": {
+            description: "Product created successfully",
+          },
+          "500": {
+            description: "Server error",
+          },
+        },
       },
     },
-    responses: {
-      "201": {
-        description: "Product created successfully",
+    "/api/product-collections": {
+      get: {
+        tags: ["Product Collections"],
+        summary: "Get product collections",
+        description:
+          "Retrieve product collection records with farm, product and livestock details.",
+        security: [{ bearerAuth: [] }],
+        responses: {
+          "200": {
+            description: "Product collections retrieved successfully",
+          },
+          "500": {
+            description: "Server error",
+          },
+        },
       },
-      "500": {
-        description: "Server error",
+      post: {
+        tags: ["Product Collections"],
+        summary: "Record a product collection",
+        description:
+          "Record a product collection for a farm, optionally linked to an individual animal or flock.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["farm_id", "product_id", "quantity"],
+                properties: {
+                  farm_id: { type: "string", format: "uuid" },
+                  product_id: { type: "string", format: "uuid" },
+                  livestock_id: { type: "string", format: "uuid" },
+                  livestock_flock_id: { type: "string", format: "uuid" },
+                  collection_date: {
+                    type: "string",
+                    format: "date",
+                  },
+                  quantity: {
+                    type: "number",
+                    exclusiveMinimum: 0,
+                  },
+                  rejected_quantity: {
+                    type: "number",
+                    minimum: 0,
+                    default: 0,
+                  },
+                  quality_grade: {
+                    type: "string",
+                    example: "Grade A",
+                  },
+                  notes: {
+                    type: "string",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Product collection recorded successfully",
+          },
+          "400": {
+            description: "Invalid collection data",
+          },
+        },
       },
     },
-  },
-},
     //place above
   },
   components: {

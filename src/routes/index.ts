@@ -12,6 +12,7 @@ import suppliersRouter from "./suppliers.routes.js";
 import stockReceiptsRouter from "./stock-receipts.routes.js";
 import stockMovementsRouter from "./stock-movements.routes.js";
 import productsRouter from "./products.routes.js";
+import productCollectionsRouter from "./product-collections.routes.js";
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use("/suppliers", suppliersRouter);
 router.use("/stock-receipts", stockReceiptsRouter);
 router.use("/stock-movements", stockMovementsRouter);
 router.use("/products", productsRouter);
+router.use("/product-collections", productCollectionsRouter);
 
 export default router;
