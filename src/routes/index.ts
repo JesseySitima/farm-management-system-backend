@@ -8,6 +8,8 @@ import livestockRouter from "./livestock.routes.js";
 import livestockFlocksRouter from "./livestock-flocks.routes.js";
 import inventoryCategoriesRouter from "./inventory-categories.routes.js";
 import inventoryItemsRouter from "./inventory-items.routes.js";
+import suppliersRouter from "./suppliers.routes.js";
+import stockReceiptsRouter from "./stock-receipts.routes.js";
 
 const router = Router();
 
@@ -28,5 +30,7 @@ router.use("/livestock-flocks", livestockFlocksRouter);
 router.use("/species", speciesRouter);
 router.use("/inventory-categories", inventoryCategoriesRouter);
 router.use("/inventory-items", inventoryItemsRouter);
+router.use("/suppliers", suppliersRouter);
+router.use("/stock-receipts", stockReceiptsRouter);
 
 export default router;

@@ -564,72 +564,228 @@ export const openApiDocument = {
       },
     },
 
-"/api/inventory-items": {
-  get: {
-    tags: ["Inventory Items"],
-    summary: "Get all inventory items",
-    description: "Retrieve all registered inventory items with their categories",
-    responses: {
-      "200": {
-        description: "Inventory items retrieved successfully",
+    "/api/inventory-items": {
+      get: {
+        tags: ["Inventory Items"],
+        summary: "Get all inventory items",
+        description:
+          "Retrieve all registered inventory items with their categories",
+        responses: {
+          "200": {
+            description: "Inventory items retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve inventory items",
+          },
+        },
       },
-      "500": {
-        description: "Failed to retrieve inventory items",
-      },
-    },
-  },
-  post: {
-    tags: ["Inventory Items"],
-    summary: "Create an inventory item",
-    description: "Register a new inventory item. The item code is generated automatically.",
-    requestBody: {
-      required: true,
-      content: {
-        "application/json": {
-          schema: {
-            type: "object",
-            required: [
-              "name",
-              "category_id",
-              "unit_of_measure",
-            ],
-            properties: {
-              name: {
-                type: "string",
-                example: "Layer Mash",
-              },
-              category_id: {
-                type: "string",
-                format: "uuid",
-                example: "YOUR-INVENTORY-CATEGORY-UUID",
-              },
-              unit_of_measure: {
-                type: "string",
-                example: "kg",
-              },
-              minimum_stock_level: {
-                type: "number",
-                example: 50,
-              },
-              description: {
-                type: "string",
-                example: "Commercial layer feed",
+      post: {
+        tags: ["Inventory Items"],
+        summary: "Create an inventory item",
+        description:
+          "Register a new inventory item. The item code is generated automatically.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name", "category_id", "unit_of_measure"],
+                properties: {
+                  name: {
+                    type: "string",
+                    example: "Layer Mash",
+                  },
+                  category_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-INVENTORY-CATEGORY-UUID",
+                  },
+                  unit_of_measure: {
+                    type: "string",
+                    example: "kg",
+                  },
+                  minimum_stock_level: {
+                    type: "number",
+                    example: 50,
+                  },
+                  description: {
+                    type: "string",
+                    example: "Commercial layer feed",
+                  },
+                },
               },
             },
           },
         },
+        responses: {
+          "201": {
+            description: "Inventory item created successfully",
+          },
+          "500": {
+            description: "Failed to create inventory item",
+          },
+        },
       },
     },
-    responses: {
-      "201": {
-        description: "Inventory item created successfully",
+
+    "/api/suppliers": {
+      get: {
+        tags: ["Suppliers"],
+        summary: "Get all suppliers",
+        description: "Retrieve all registered suppliers",
+        responses: {
+          "200": {
+            description: "Suppliers retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve suppliers",
+          },
+        },
       },
-      "500": {
-        description: "Failed to create inventory item",
+      post: {
+        tags: ["Suppliers"],
+        summary: "Create a supplier",
+        description:
+          "Register a new supplier. Supplier code is generated automatically.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name"],
+                properties: {
+                  name: {
+                    type: "string",
+                    example: "Malawi Farm Supplies",
+                  },
+                  contact_person: {
+                    type: "string",
+                    example: "John Banda",
+                  },
+                  phone: {
+                    type: "string",
+                    example: "+265 991 234 567",
+                  },
+                  email: {
+                    type: "string",
+                    format: "email",
+                    example: "info@example.com",
+                  },
+                  address: {
+                    type: "string",
+                    example: "Blantyre, Malawi",
+                  },
+                  description: {
+                    type: "string",
+                    example: "Supplier of animal feeds and veterinary products",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Supplier created successfully",
+          },
+          "500": {
+            description: "Failed to create supplier",
+          },
+        },
       },
     },
-  },
-},
+
+    "/api/stock-receipts": {
+      get: {
+        tags: ["Stock Receiving"],
+        summary: "Get all stock receipts",
+        description:
+          "Retrieve stock receipts with farm, supplier and received item details",
+        responses: {
+          "200": {
+            description: "Stock receipts retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve stock receipts",
+          },
+        },
+      },
+      post: {
+        tags: ["Stock Receiving"],
+        summary: "Create a stock receipt",
+        description:
+          "Record stock received from a supplier, including multiple inventory items",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["farm_id", "supplier_id", "items"],
+                properties: {
+                  farm_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-FARM-UUID",
+                  },
+                  supplier_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-SUPPLIER-UUID",
+                  },
+                  received_date: {
+                    type: "string",
+                    format: "date",
+                    example: "2026-11-27",
+                  },
+                  supplier_reference: {
+                    type: "string",
+                    example: "INV-2026-001",
+                  },
+                  notes: {
+                    type: "string",
+                    example: "Monthly poultry feed delivery",
+                  },
+                  items: {
+                    type: "array",
+                    minItems: 1,
+                    items: {
+                      type: "object",
+                      required: ["inventory_item_id", "quantity"],
+                      properties: {
+                        inventory_item_id: {
+                          type: "string",
+                          format: "uuid",
+                          example: "YOUR-INVENTORY-ITEM-UUID",
+                        },
+                        quantity: {
+                          type: "number",
+                          example: 200,
+                        },
+                        unit_cost: {
+                          type: "number",
+                          example: 1500,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Stock receipt created successfully",
+          },
+          "500": {
+            description: "Failed to create stock receipt",
+          },
+        },
+      },
+    },
 
     //place above
   },
