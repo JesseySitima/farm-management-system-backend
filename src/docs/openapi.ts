@@ -821,6 +821,117 @@ export const openApiDocument = {
       },
     },
 
+    "/api/stock-movements/issues": {
+      post: {
+        tags: ["Stock Movements"],
+        summary: "Issue stock",
+        description:
+          "Record stock issued from a farm's inventory. The system checks available stock before processing the issue.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["farm_id", "inventory_item_id", "quantity"],
+                properties: {
+                  farm_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-FARM-UUID",
+                  },
+                  inventory_item_id: {
+                    type: "string",
+                    format: "uuid",
+                    example: "YOUR-INVENTORY-ITEM-UUID",
+                  },
+                  quantity: {
+                    type: "number",
+                    example: 20,
+                  },
+                  movement_date: {
+                    type: "string",
+                    format: "date",
+                    example: "2026-11-27",
+                  },
+                  reference_type: {
+                    type: "string",
+                    example: "feeding",
+                  },
+                  reference_id: {
+                    type: "string",
+                    format: "uuid",
+                  },
+                  notes: {
+                    type: "string",
+                    example: "Feed issued to poultry",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Stock issued successfully",
+          },
+          "400": {
+            description: "Insufficient stock",
+          },
+          "500": {
+            description: "Failed to issue stock",
+          },
+        },
+      },
+    },
+    "/api/stock-movements/adjustments": {
+      post: {
+        tags: ["Stock Movements"],
+        summary: "Create a stock adjustment",
+        description:
+          "Manually increase or decrease stock to correct inventory balances. A reason is required.",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: [
+                  "farm_id",
+                  "inventory_item_id",
+                  "quantity",
+                  "adjustment_direction",
+                  "reason",
+                ],
+                properties: {
+                  farm_id: { type: "string", format: "uuid" },
+                  inventory_item_id: { type: "string", format: "uuid" },
+                  quantity: { type: "number", exclusiveMinimum: 0 },
+                  adjustment_direction: {
+                    type: "string",
+                    enum: ["increase", "decrease"],
+                  },
+                  reason: { type: "string", minLength: 1 },
+                  movement_date: { type: "string", format: "date" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Stock adjustment created successfully",
+          },
+          "400": {
+            description: "Invalid adjustment or insufficient stock",
+          },
+          "500": {
+            description: "Server error",
+          },
+        },
+      },
+    },
     //place above
   },
   components: {

@@ -3,6 +3,8 @@ import { Router, Request, Response } from "express";
 import {
   getStockMovements,
   getStockBalances,
+  createStockIssue,
+  createStockAdjustment
 } from "../services/stock-movement.service";
 
 const router = Router();
@@ -48,5 +50,55 @@ router.get("/balances", async (_req: Request, res: Response) => {
     });
   }
 });
+
+
+ // Create a stock issue
+router.post("/issues", async (req: Request, res: Response) => {
+  try {
+    const movement = await createStockIssue(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: "Stock issued successfully",
+      data: movement,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Failed to issue stock";
+
+    const isInsufficientStock = message.includes("Insufficient stock");
+
+    return res.status(isInsufficientStock ? 400 : 500).json({
+      success: false,
+      message,
+    });
+  }
+});
+
+router.post("/adjustments", async (req, res) => {
+  try {
+    const adjustment = await createStockAdjustment(req.body);
+
+    res.status(201).json({
+      message: "Stock adjustment created successfully",
+      data: adjustment,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to create stock adjustment";
+
+    const isBadRequest =
+      message.includes("Insufficient stock") ||
+      message.includes("Adjustment") ||
+      message.toLowerCase().includes("reason");
+
+    res.status(isBadRequest ? 400 : 500).json({
+      message,
+    });
+  }
+});
+
 
 export default router;
