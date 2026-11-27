@@ -513,6 +513,124 @@ export const openApiDocument = {
         },
       },
     },
+
+    "/api/inventory-categories": {
+      get: {
+        tags: ["Inventory Categories"],
+        summary: "Get all inventory categories",
+        description: "Retrieve all registered inventory categories",
+        responses: {
+          "200": {
+            description: "Inventory categories retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve inventory categories",
+          },
+        },
+      },
+      post: {
+        tags: ["Inventory Categories"],
+        summary: "Create an inventory category",
+        description: "Register a new inventory category",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["name"],
+                properties: {
+                  name: {
+                    type: "string",
+                    example: "Feeds",
+                  },
+                  description: {
+                    type: "string",
+                    example: "All livestock feed and nutritional supplies",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Inventory category created successfully",
+          },
+          "500": {
+            description: "Failed to create inventory category",
+          },
+        },
+      },
+    },
+
+"/api/inventory-items": {
+  get: {
+    tags: ["Inventory Items"],
+    summary: "Get all inventory items",
+    description: "Retrieve all registered inventory items with their categories",
+    responses: {
+      "200": {
+        description: "Inventory items retrieved successfully",
+      },
+      "500": {
+        description: "Failed to retrieve inventory items",
+      },
+    },
+  },
+  post: {
+    tags: ["Inventory Items"],
+    summary: "Create an inventory item",
+    description: "Register a new inventory item. The item code is generated automatically.",
+    requestBody: {
+      required: true,
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            required: [
+              "name",
+              "category_id",
+              "unit_of_measure",
+            ],
+            properties: {
+              name: {
+                type: "string",
+                example: "Layer Mash",
+              },
+              category_id: {
+                type: "string",
+                format: "uuid",
+                example: "YOUR-INVENTORY-CATEGORY-UUID",
+              },
+              unit_of_measure: {
+                type: "string",
+                example: "kg",
+              },
+              minimum_stock_level: {
+                type: "number",
+                example: 50,
+              },
+              description: {
+                type: "string",
+                example: "Commercial layer feed",
+              },
+            },
+          },
+        },
+      },
+    },
+    responses: {
+      "201": {
+        description: "Inventory item created successfully",
+      },
+      "500": {
+        description: "Failed to create inventory item",
+      },
+    },
+  },
+},
+
     //place above
   },
   components: {

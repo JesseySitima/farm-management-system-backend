@@ -6,6 +6,8 @@ import farmsRouter from "./farms.routes.js";
 import speciesRouter from "./species.routes.js";
 import livestockRouter from "./livestock.routes.js";
 import livestockFlocksRouter from "./livestock-flocks.routes.js";
+import inventoryCategoriesRouter from "./inventory-categories.routes.js";
+import inventoryItemsRouter from "./inventory-items.routes.js";
 
 const router = Router();
 
@@ -24,5 +26,7 @@ router.use("/farms", farmsRouter);
 router.use("/livestock", livestockRouter);
 router.use("/livestock-flocks", livestockFlocksRouter);
 router.use("/species", speciesRouter);
+router.use("/inventory-categories", inventoryCategoriesRouter);
+router.use("/inventory-items", inventoryItemsRouter);
 
 export default router;
