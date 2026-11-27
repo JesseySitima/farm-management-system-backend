@@ -10,6 +10,7 @@ import inventoryCategoriesRouter from "./inventory-categories.routes.js";
 import inventoryItemsRouter from "./inventory-items.routes.js";
 import suppliersRouter from "./suppliers.routes.js";
 import stockReceiptsRouter from "./stock-receipts.routes.js";
+import stockMovementsRouter from "./stock-movements.routes.js";
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use("/inventory-categories", inventoryCategoriesRouter);
 router.use("/inventory-items", inventoryItemsRouter);
 router.use("/suppliers", suppliersRouter);
 router.use("/stock-receipts", stockReceiptsRouter);
+router.use("/stock-movements", stockMovementsRouter);
 
 export default router;

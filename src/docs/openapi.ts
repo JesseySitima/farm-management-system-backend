@@ -787,6 +787,40 @@ export const openApiDocument = {
       },
     },
 
+    "/api/stock-movements": {
+      get: {
+        tags: ["Stock Movements"],
+        summary: "Get stock movement history",
+        description:
+          "Retrieve stock movements with farm and inventory item details",
+        responses: {
+          "200": {
+            description: "Stock movements retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve stock movements",
+          },
+        },
+      },
+    },
+
+    "/api/stock-movements/balances": {
+      get: {
+        tags: ["Stock Movements"],
+        summary: "Get current stock balances",
+        description:
+          "Retrieve calculated stock balances for each farm and inventory item",
+        responses: {
+          "200": {
+            description: "Stock balances retrieved successfully",
+          },
+          "500": {
+            description: "Failed to retrieve stock balances",
+          },
+        },
+      },
+    },
+
     //place above
   },
   components: {
